@@ -20,31 +20,38 @@ jobs:
 
       - name: Save and Format JSON
         env:
-          # We take the raw payload
           RAW_TOKENS: ${{ toJSON(github.event.client_payload.tokens) }}
         run: |
-          # 1. We use jq to parse the string and pretty-print it
-          # 2. If the data is double-stringified, 'fromjson' fixes it
           echo "$RAW_TOKENS" | jq 'if type == "string" then fromjson else . end' > tokens/design-tokens.json
 
-      - name: Run Prettier (No Config Mode)
-        run: |
-          # --no-config avoids errors with missing plugins like Svelte
-          # --parser json ensures we handle it as a standard JSON file
-          npx prettier@latest --write tokens/design-tokens.json --no-config --parser json
+      - name: Run Prettier
+        run: npx prettier@latest --write tokens/design-tokens.json --no-config --parser json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          # Cache removed to prevent the 'lock file not found' error
+
+      - name: Install dependencies
+        # 'npm install' will rebuild the dependency tree from package.json
+        run: npm install
+
+      - name: Transform Tokens
+        run: npm run transform-tokens
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: 'style: update and format design tokens'
+          commit-message: "${{ github.event.client_payload.commitMessage || 'style: update design tokens' }}"
           branch: figma-token-update
           delete-branch: true
-          title: '🎨 Update Design Tokens'
+          title: "🎨 ${{ github.event.client_payload.commitMessage || 'Update Design Tokens' }}"
           body: |
-            Automated update of design tokens from Figma.
+            **Source Figma File:** ${{ github.event.client_payload.filename }}
+            **Figma Message:** ${{ github.event.client_payload.commitMessage }}
 
-            **Changes:**
-            - Unpacked escaped JSON
-            - Pretty-printed and formatted with Prettier
+            ---
+            *Automated update: JSON formatted and Typography flattened into CSS/SCSS variables.*
           base: main
