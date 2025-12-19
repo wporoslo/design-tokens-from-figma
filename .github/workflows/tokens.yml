@@ -13,18 +13,17 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        # Important: By default checkout uses GITHUB_TOKEN.
-        # With the permission block above, it now has write access.
 
       - name: Create tokens directory
         run: mkdir -p tokens
 
       - name: Save JSON to file
-        uses: jsdaniell/create-json@1.1.2
-        with:
-          name: 'design-tokens.json'
-          json: ${{ github.event.client_payload.tokens }}
-          dir: 'tokens'
+        shell: bash
+        run: |
+          # We use a 'here-doc' to safely write the JSON to a file
+          cat <<EOF > tokens/design-tokens.json
+          ${{ JSON.stringify(github.event.client_payload.tokens) }}
+          EOF
 
       - name: Commit and Push
         uses: stefanzweifel/git-auto-commit-action@v5
