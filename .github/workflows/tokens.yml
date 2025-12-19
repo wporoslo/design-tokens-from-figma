@@ -1,0 +1,31 @@
+name: Transform Figma Tokens
+
+on:
+  repository_dispatch:
+    # This matches the "Event Type" you set in the Figma plugin
+    types: [update-tokens]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Create tokens directory
+        run: mkdir -p tokens
+
+      - name: Save JSON to file
+        id: create-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          # The plugin sends tokens inside 'client_payload.tokens'
+          name: 'design-tokens.json'
+          json: ${{ github.event.client_payload.tokens }}
+          dir: 'tokens'
+
+      - name: Commit and Push
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'Figma Tokens Updated'
+          file_pattern: 'tokens/design-tokens.json'
