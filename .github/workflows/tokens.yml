@@ -1,4 +1,4 @@
-name: Transform Figma Tokens
+name: Figma Tokens to PR
 
 on:
   repository_dispatch:
@@ -6,9 +6,10 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
-  build:
+  create-pr:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -17,16 +18,33 @@ jobs:
       - name: Create tokens directory
         run: mkdir -p tokens
 
-      - name: Save JSON to file
-        shell: bash
+      - name: Save and Format JSON
+        env:
+          # We take the raw payload
+          RAW_TOKENS: ${{ toJSON(github.event.client_payload.tokens) }}
         run: |
-          # We use a 'here-doc' to safely write the JSON to a file
-          cat <<EOF > tokens/design-tokens.json
-          ${{ JSON.stringify(github.event.client_payload.tokens) }}
-          EOF
+          # 1. We use jq to parse the string and pretty-print it
+          # 2. If the data is double-stringified, 'fromjson' fixes it
+          echo "$RAW_TOKENS" | jq 'if type == "string" then fromjson else . end' > tokens/design-tokens.json
 
-      - name: Commit and Push
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Run Prettier (No Config Mode)
+        run: |
+          # --no-config avoids errors with missing plugins like Svelte
+          # --parser json ensures we handle it as a standard JSON file
+          npx prettier@latest --write tokens/design-tokens.json --no-config --parser json
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
         with:
-          commit_message: 'Figma Tokens Updated'
-          file_pattern: 'tokens/design-tokens.json'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'style: update and format design tokens'
+          branch: figma-token-update
+          delete-branch: true
+          title: '🎨 Update Design Tokens'
+          body: |
+            Automated update of design tokens from Figma.
+
+            **Changes:**
+            - Unpacked escaped JSON
+            - Pretty-printed and formatted with Prettier
+          base: main
