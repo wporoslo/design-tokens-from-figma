@@ -71,7 +71,7 @@
   --primitives-color-neutral-700: #717188;
   --primitives-color-neutral-800: #323241;
   --primitives-color-neutral-1000: #000000;
-  --primitives-color-green-200: #37ff57;
+  --primitives-color-green-201: #36a047;
   --primitives-color-green-300: #29e682;
   --primitives-color-green-400: #02bfb0;
   --primitives-color-green-500: #279e82;
@@ -83,6 +83,7 @@
   --primitives-color-orange-400: #ff995f;
   --primitives-color-yellow-300: #fff500;
   --primitives-color-yellow-500: #ffcd1b;
+  --primitives-bialy: #ffffff;
   --tokens-surface-user-orange-1: #ff995f;
   --tokens-surface-user-purple-1: #bf6dd8;
   --tokens-surface-user-blue-1: #6d9bff;
@@ -102,7 +103,7 @@
   --tokens-surface-brand-secondary: #eb279d;
   --tokens-surface-compliments-yellow-1: #fff500;
   --tokens-surface-compliments-gold-1: #ffcd1b;
-  --tokens-surface-compliments-green-1: #37ff57;
+  --tokens-surface-compliments-green-1: #36a047;
   --tokens-surface-brand-heavy-contrast: #fca4d0;
   --tokens-surface-minimal: #323241;
   --tokens-text-primary: #ffffff;
