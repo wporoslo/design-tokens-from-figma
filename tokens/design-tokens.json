@@ -566,9 +566,9 @@
         }
       },
       "green": {
-        "200": {
+        "201": {
           "type": "color",
-          "value": "#37ff57ff",
+          "value": "#36a047ff",
           "blendMode": "normal",
           "extensions": {
             "org.lukasoppermann.figmaDesignTokens": {
@@ -731,6 +731,19 @@
               "exportKey": "variables"
             }
           }
+        }
+      }
+    },
+    "bialy": {
+      "type": "color",
+      "value": "#ffffffff",
+      "blendMode": "normal",
+      "extensions": {
+        "org.lukasoppermann.figmaDesignTokens": {
+          "collection": "Primitives",
+          "scopes": ["ALL_SCOPES"],
+          "variableId": "VariableID:1230:146",
+          "exportKey": "variables"
         }
       }
     }
@@ -990,7 +1003,7 @@
         "green-1": {
           "description": "",
           "type": "color",
-          "value": "{primitives.color.green.200}",
+          "value": "{primitives.color.green.201}",
           "extensions": {
             "org.lukasoppermann.figmaDesignTokens": {
               "collection": "Tokens",
